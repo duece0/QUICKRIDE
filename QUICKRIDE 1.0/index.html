@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickRide - Bus Pass Tickets</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/booking.css">
+    <link rel="stylesheet" href="styles/tickets.css">
+    <link rel="stylesheet" href="styles/admin.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-bus"></i>
+                <span>QuickRide</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#booking" class="nav-link">Book Ticket</a></li>
+                <li><a href="#available-buses" class="nav-link">Available Buses</a></li>
+                <li><a href="#my-tickets" class="nav-link">My Tickets</a></li>
+                <li><a href="#emergency" class="nav-link">Emergency</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+                <li><a href="#admin" class="nav-link" id="admin-link">Admin Panel</a></li>
+            </ul>
+            <div class="nav-auth">
+                <div id="auth-buttons" class="auth-buttons">
+                    <button class="btn-outline" onclick="showAuthModal('login')">Login</button>
+                    <button class="btn-primary" onclick="showAuthModal('signup')">Sign Up</button>
+                </div>
+                <div id="user-menu" class="user-menu" style="display: none;">
+                    <span id="user-name" class="user-name"></span>
+                    <button class="btn-outline" onclick="logout()">Logout</button>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Travel Smart with QuickRide</h1>
+            <p>Book your bus tickets instantly and travel with confidence across Ghana</p>
+            <button class="cta-button" onclick="showSection('booking')">Book Now</button>
+        </div>
+        <div class="hero-image">
+            <i class="fas fa-bus-alt"></i>
+        </div>
+    </section>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="login-form" class="auth-form">
+                <h2>Login to QuickRide</h2>
+                <form id="login-form-element">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="auth-button">Login</button>
+                </form>
+                <p class="auth-switch">Don't have an account? <a href="#" onclick="switchAuthForm('signup')">Sign up</a></p>
+            </div>
+            <div id="signup-form" class="auth-form" style="display: none;">
+                <h2>Create Account</h2>
+                <form id="signup-form-element">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-phone">Phone Number</label>
+                        <input type="tel" id="signup-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" required>
+                    </div>
+                    <button type="submit" class="auth-button">Sign Up</button>
+                </form>
+                <p class="auth-switch">Already have an account? <a href="#" onclick="switchAuthForm('login')">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking-section" style="display: none;">
+        <div class="container">
+            <h2>Book Your Bus Ticket</h2>
+            <div class="booking-alert" id="auth-alert" style="display: none;">
+                <i class="fas fa-info-circle"></i>
+                <span>Please login to book a ticket</span>
+                <button onclick="showAuthModal('login')">Login</button>
+            </div>
+            <form id="booking-form" class="booking-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="from">From</label>
+                        <select id="from" required>
+                            <option value="">Select departure city</option>
+                            <option value="accra">Accra</option>
+                            <option value="kumasi">Kumasi</option>
+                            <option value="tamale">Tamale</option>
+                            <option value="cape-coast">Cape Coast</option>
+                            <option value="tema">Tema</option>
+                            <option value="takoradi">Takoradi</option>
+                            <option value="sunyani">Sunyani</option>
+                            <option value="ho">Ho</option>
+                            <option value="bolgatanga">Bolgatanga</option>
+                            <option value="wa">Wa</option>
+                            <option value="koforidua">Koforidua</option>
+                            <option value="techiman">Techiman</option>
+                            <option value="nawrongo">Nawrongo</option>
+                            <option value="hohoe">Hohoe</option>
+                            <option value="yendi">Yendi</option>
+                            <option value="damongo">Damongo</option>
+                            <option value="bawku">Bawku</option>
+                            <option value="navrongo">Navrongo</option>
+                            <option value="berekum">Berekum</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="to">To</label>
+                        <select id="to" required>
+                            <option value="">Select destination city</option>
+                            <option value="accra">Accra</option>
+                            <option value="kumasi">Kumasi</option>
+                            <option value="tamale">Tamale</option>
+                            <option value="cape-coast">Cape Coast</option>
+                            <option value="tema">Tema</option>
+                            <option value="takoradi">Takoradi</option>
+                            <option value="sunyani">Sunyani</option>
+                            <option value="ho">Ho</option>
+                            <option value="bolgatanga">Bolgatanga</option>
+                            <option value="wa">Wa</option>
+                            <option value="koforidua">Koforidua</option>
+                            <option value="techiman">Techiman</option>
+                            <option value="nawrongo">Nawrongo</option>
+                            <option value="hohoe">Hohoe</option>
+                            <option value="yendi">Yendi</option>
+                            <option value="damongo">Damongo</option>
+                            <option value="bawku">Bawku</option>
+                            <option value="navrongo">Navrongo</option>
+                            <option value="berekum">Berekum</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="departure-date">Departure Date</label>
+                        <input type="date" id="departure-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="departure-time">Departure Time</label>
+                        <select id="departure-time" required>
+                            <option value="">Select time</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="passengers">Number of Passengers</label>
+                        <select id="passengers" required>
+                            <option value="1">1 Passenger</option>
+                            <option value="2">2 Passengers</option>
+                            <option value="3">3 Passengers</option>
+                            <option value="4">4 Passengers</option>
+                            <option value="5">5 Passengers</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Emergency Contact Section -->
+                <div class="emergency-contact-section">
+                    <h3><i class="fas fa-shield-alt"></i> Emergency Contact Information</h3>
+                    <p class="emergency-info">Please provide an emergency contact in case we need to reach someone during your journey.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="emergency-name">Emergency Contact Name</label>
+                            <input type="text" id="emergency-name" placeholder="Full name of emergency contact" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="emergency-phone">Emergency Contact Phone</label>
+                            <input type="tel" id="emergency-phone" placeholder="+233 XX XXX XXXX" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="emergency-relationship">Relationship</label>
+                            <select id="emergency-relationship" required>
+                                <option value="">Select relationship</option>
+                                <option value="parent">Parent</option>
+                                <option value="spouse">Spouse</option>
+                                <option value="sibling">Sibling</option>
+                                <option value="child">Child</option>
+                                <option value="friend">Friend</option>
+                                <option value="colleague">Colleague</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="emergency-email">Emergency Contact Email (Optional)</label>
+                            <input type="email" id="emergency-email" placeholder="email@example.com">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="book-button">
+                    <i class="fas fa-search"></i>
+                    Search Buses
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Available Buses Section -->
+    <section id="available-buses" class="buses-section" style="display: none;">
+        <div class="container">
+            <h2>Available Buses</h2>
+            <div id="buses-container" class="buses-container">
+                <!-- Buses will be dynamically generated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Passenger Details Modal -->
+    <div id="passenger-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Passenger Details</h2>
+            <div id="passenger-forms-container">
+                <!-- Passenger forms will be generated dynamically -->
+            </div>
+            <div class="passenger-summary">
+                <div class="summary-item">
+                    <span>Bus:</span>
+                    <span id="selected-bus-info"></span>
+                </div>
+                <div class="summary-item">
+                    <span>Route:</span>
+                    <span id="selected-route"></span>
+                </div>
+                <div class="summary-item">
+                    <span>Date & Time:</span>
+                    <span id="selected-datetime"></span>
+                </div>
+                <div class="summary-item total">
+                    <span>Total Amount:</span>
+                    <span id="total-amount"></span>
+                </div>
+            </div>
+            
+
+            
+
+            <button id="proceed-payment" class="pay-button">
+                <i class="fas fa-credit-card"></i>
+                Proceed to Payment
+            </button>
+        </div>
+    </div>
+
+    <!-- My Tickets Section -->
+    <section id="my-tickets" class="tickets-section" style="display: none;">
+        <div class="container">
+            <h2>My Tickets</h2>
+            <div class="tickets-filter">
+                <button class="filter-btn active" data-filter="all">All Tickets</button>
+                <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+                <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+            </div>
+            <div id="tickets-container" class="tickets-container">
+                <!-- Tickets will be dynamically generated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Section -->
+    <section id="emergency" class="emergency-section" style="display: none;">
+        <div class="container">
+            <h2>Emergency Contacts</h2>
+            <div class="emergency-grid">
+                <div class="emergency-card">
+                    <div class="emergency-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Emergency Hotline</h3>
+                    <p class="emergency-number">191</p>
+                    <p>24/7 Emergency Response</p>
+                </div>
+                <div class="emergency-card">
+                    <div class="emergency-icon">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <h3>Ambulance Service</h3>
+                    <p class="emergency-number">193</p>
+                    <p>Medical Emergency</p>
+                </div>
+                <div class="emergency-card">
+                    <div class="emergency-icon">
+                        <i class="fas fa-fire-extinguisher"></i>
+                    </div>
+                    <h3>Fire Service</h3>
+                    <p class="emergency-number">192</p>
+                    <p>Fire Emergency</p>
+                </div>
+                <div class="emergency-card">
+                    <div class="emergency-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Police Service</h3>
+                    <p class="emergency-number">199</p>
+                    <p>Security Emergency</p>
+                </div>
+                <div class="emergency-card">
+                    <div class="emergency-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>QuickRide Support</h3>
+                    <p class="emergency-number">+233 24 123 4567</p>
+                    <p>Travel Support & Assistance</p>
+                </div>
+                <div class="emergency-card">
+                    <div class="emergency-icon">
+                        <i class="fas fa-road"></i>
+                    </div>
+                    <h3>Road Safety</h3>
+                    <p class="emergency-number">+233 30 222 8888</p>
+                    <p>Road Accident Reporting</p>
+                </div>
+            </div>
+            <div class="emergency-tips">
+                <h3>Emergency Travel Tips</h3>
+                <ul>
+                    <li>Always keep your ticket and ID with you</li>
+                    <li>Share your travel details with family/friends</li>
+                    <li>Keep emergency contacts saved in your phone</li>
+                    <li>Report suspicious activities to authorities</li>
+                    <li>Keep a copy of important documents</li>
+                    <li>Stay alert and follow safety instructions</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Section -->
+            <section id="admin" class="admin-section">
+        <div class="container">
+            <h2>Admin Panel</h2>
+            <div class="admin-login" id="admin-login-form">
+                <h3>Admin Login</h3>
+                <form id="admin-login">
+                    <div class="form-group">
+                        <label for="admin-username">Username</label>
+                        <input type="text" id="admin-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" required>
+                    </div>
+                    <button type="submit" class="admin-button">Login as Admin</button>
+                </form>
+            </div>
+            
+            <div class="admin-dashboard" id="admin-dashboard" style="display: none;">
+                <div class="admin-header">
+                    <h3>Welcome, Admin!</h3>
+                    <button onclick="adminLogout()" class="admin-logout-btn">Logout</button>
+                </div>
+                
+                <div class="admin-tabs">
+                    <button class="admin-tab active" onclick="showAdminTab('buses')">Manage Buses</button>
+                    <button class="admin-tab" onclick="showAdminTab('routes')">Manage Routes</button>
+                    <button class="admin-tab" onclick="showAdminTab('prices')">Manage Prices</button>
+                </div>
+                
+                <!-- Buses Management Tab -->
+                <div id="buses-tab" class="admin-tab-content active">
+                    <h4>Add New Bus</h4>
+                    <form id="add-bus-form" class="admin-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="bus-company">Bus Company</label>
+                                <input type="text" id="bus-company" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="bus-type">Bus Type</label>
+                                <select id="bus-type" required>
+                                    <option value="">Select type</option>
+                                    <option value="VIP">VIP</option>
+                                    <option value="Express">Express</option>
+                                    <option value="Standard">Standard</option>
+                                    <option value="Luxury">Luxury</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="bus-capacity">Capacity</label>
+                                <input type="number" id="bus-capacity" min="20" max="60" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="bus-status">Status</label>
+                                <select id="bus-status" required>
+                                    <option value="active">Active</option>
+                                    <option value="maintenance">Maintenance</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="admin-button">Add Bus</button>
+                    </form>
+                    
+                    <h4>Available Buses</h4>
+                    <div id="admin-buses-list" class="admin-list">
+                        <!-- Buses will be listed here -->
+                    </div>
+                </div>
+                
+                <!-- Routes Management Tab -->
+                <div id="routes-tab" class="admin-tab-content">
+                    <h4>Add New Route</h4>
+                    <form id="add-route-form" class="admin-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="route-from">From</label>
+                                <select id="route-from" required>
+                                    <option value="">Select departure city</option>
+                                    <option value="accra">Accra</option>
+                                    <option value="kumasi">Kumasi</option>
+                                    <option value="tamale">Tamale</option>
+                                    <option value="cape-coast">Cape Coast</option>
+                                    <option value="tema">Tema</option>
+                                    <option value="takoradi">Takoradi</option>
+                                    <option value="sunyani">Sunyani</option>
+                                    <option value="ho">Ho</option>
+                                    <option value="bolgatanga">Bolgatanga</option>
+                                    <option value="wa">Wa</option>
+                                    <option value="koforidua">Koforidua</option>
+                                    <option value="techiman">Techiman</option>
+                                    <option value="nawrongo">Nawrongo</option>
+                                    <option value="hohoe">Hohoe</option>
+                                    <option value="yendi">Yendi</option>
+                                    <option value="damongo">Damongo</option>
+                                    <option value="bawku">Bawku</option>
+                                    <option value="navrongo">Navrongo</option>
+                                    <option value="berekum">Berekum</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="route-to">To</label>
+                                <select id="route-to" required>
+                                    <option value="">Select destination city</option>
+                                    <option value="accra">Accra</option>
+                                    <option value="kumasi">Kumasi</option>
+                                    <option value="tamale">Tamale</option>
+                                    <option value="cape-coast">Cape Coast</option>
+                                    <option value="tema">Tema</option>
+                                    <option value="takoradi">Takoradi</option>
+                                    <option value="sunyani">Sunyani</option>
+                                    <option value="ho">Ho</option>
+                                    <option value="bolgatanga">Bolgatanga</option>
+                                    <option value="wa">Wa</option>
+                                    <option value="koforidua">Koforidua</option>
+                                    <option value="techiman">Techiman</option>
+                                    <option value="nawrongo">Nawrongo</option>
+                                    <option value="hohoe">Hohoe</option>
+                                    <option value="yendi">Yendi</option>
+                                    <option value="damongo">Damongo</option>
+                                    <option value="bawku">Bawku</option>
+                                    <option value="navrongo">Navrongo</option>
+                                    <option value="berekum">Berekum</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="route-distance">Distance (km)</label>
+                                <input type="number" id="route-distance" min="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="route-duration">Duration (hours)</label>
+                                <input type="number" id="route-duration" min="1" max="12" step="0.5" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="admin-button">Add Route</button>
+                    </form>
+                    
+                    <h4>Available Routes</h4>
+                    <div id="admin-routes-list" class="admin-list">
+                        <!-- Routes will be listed here -->
+                    </div>
+                </div>
+                
+                <!-- Prices Management Tab -->
+                <div id="prices-tab" class="admin-tab-content">
+                    <h4>Set Route Prices</h4>
+                    <form id="set-price-form" class="admin-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="price-route">Route</label>
+                                <select id="price-route" required>
+                                    <option value="">Select route</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="price-vip">VIP Price (GHS)</label>
+                                <input type="number" id="price-vip" min="10" step="0.5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="price-express">Express Price (GHS)</label>
+                                <input type="number" id="price-express" min="10" step="0.5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="price-standard">Standard Price (GHS)</label>
+                                <input type="number" id="price-standard" min="10" step="0.5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="price-luxury">Luxury Price (GHS)</label>
+                                <input type="number" id="price-luxury" min="10" step="0.5" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="admin-button">Set Prices</button>
+                    </form>
+                    
+                    <h4>Current Prices</h4>
+                    <div id="admin-prices-list" class="admin-list">
+                        <!-- Prices will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section" style="display: none;">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+233 24 123 4567</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>support@quickride.gh</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Tema, Greater Accra, Ghana</span>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Your Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content success">
+            <span class="close">&times;</span>
+            <i class="fas fa-check-circle"></i>
+            <h2>Booking Confirmed!</h2>
+            <p>Your tickets have been booked successfully.</p>
+            <div id="ticket-details"></div>
+            <button onclick="closeModal('success-modal')" class="ok-button">View My Tickets</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-bus"></i>
+                        <span>QuickRide</span>
+                    </div>
+                    <p>Your trusted partner for convenient and affordable bus travel across Ghana.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#booking">Book Ticket</a></li>
+                        <li><a href="#available-buses">Available Buses</a></li>
+                        <li><a href="#my-tickets">My Tickets</a></li>
+                        <li><a href="#emergency">Emergency</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 QuickRide. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/tickets.js"></script>
+    <script src="js/payment.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
+
